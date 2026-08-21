@@ -77,4 +77,6 @@ The included icons are indigo-to-purple rounded squares with a white **"S"**. To
 
 This project is **not open source**. The source code is made viewable for reference only. See [LICENSE](LICENSE) for full terms.
 
+If you distribute Searchit to end users, you must include the accompanying [EULA.txt](EULA.txt), which grants users a license to run the software only — no source-code access, modification, or resale.
+
 Copyright (c) 2026 Afnan ([@Afnan-w](https://github.com/Afnan-w)). No use, copying, modification, or distribution is permitted without prior written permission from the owner.

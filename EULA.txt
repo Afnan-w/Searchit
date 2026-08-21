@@ -1,0 +1,130 @@
+SEARCHIT — END USER LICENSE AGREEMENT (EULA)
+
+Copyright (c) 2026 Afnan. All Rights Reserved.
+Software: "Searchit" Chrome Extension
+Owner and Licensor: Afnan (the "Owner")
+
+IMPORTANT — READ CAREFULLY BEFORE INSTALLING OR USING THE SOFTWARE:
+
+This End User License Agreement ("Agreement") is a legal agreement between
+you ("You" or "User") and the Owner for the Searchit browser extension,
+including all of its software components, media, printed materials, and
+electronic documentation (collectively, the "Software").
+
+By installing, copying, downloading, accessing, or otherwise using the
+Software, You agree to be bound by the terms of this Agreement. If You do
+not agree to the terms of this Agreement, do not install or use the
+Software.
+
+1. LICENSE GRANT
+
+   Subject to Your compliance with this Agreement, the Owner grants You a
+   limited, personal, non-exclusive, non-transferable, revocable license
+   to install and run the Software on devices under Your control, solely
+   for Your own personal, non-commercial use (the "License").
+
+   This is a license to USE the Software only. It is NOT a sale of the
+   Software or any copy of it. The Owner reserves all rights not
+   expressly granted to You in this Agreement.
+
+2. RESTRICTIONS
+
+   Except to the extent permitted by applicable mandatory law, You may
+   NOT:
+
+     a) Access, view, read, extract, or make use of the Software's
+        source code, in whole or in part;
+
+     b) Copy, reproduce, modify, adapt, translate, or create derivative
+        works based upon the Software;
+
+     c) Reverse engineer, decompile, disassemble, or otherwise attempt
+        to derive the source code, algorithms, structure, or organization
+        of the Software;
+
+     d) Distribute, sublicense, rent, lease, lend, sell, resell, or
+        commercially exploit the Software or any copy of it;
+
+     e) Make the Software available to any third party over a network,
+        or bundle or embed it into any other product or service;
+
+     f) Remove, alter, or obscure any copyright notice, trademark,
+        logo, or other proprietary rights notice contained in or on
+        the Software;
+
+     g) Use the Software for any unlawful purpose or in any way that
+        violates this Agreement.
+
+3. INTELLECTUAL PROPERTY OWNERSHIP
+
+   The Software is licensed, not sold, to You. The Software and all
+   copies thereof are owned by the Owner and are protected by copyright
+   and other intellectual property laws and treaties. All right, title,
+   and interest in and to the Software, including all intellectual
+   property rights therein, remain exclusively with the Owner.
+
+   The name "Searchit", the Searchit logo, and all related marks are
+   trademarks of the Owner and may not be used without prior written
+   consent.
+
+4. UPDATES
+
+   The Owner may, from time to time and at its sole discretion, provide
+   updates, patches, or new versions of the Software. Such updates are
+   governed by this Agreement unless accompanied by a separate license.
+   The Owner is not obligated to provide any updates or support.
+
+5. TERMINATION
+
+   This Agreement is effective until terminated. It terminates
+   automatically without notice if You breach any term of this
+   Agreement. Upon termination, You must immediately cease all use of
+   the Software and delete all copies from Your devices.
+
+6. DISCLAIMER OF WARRANTY
+
+   THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY
+   OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+   IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+   PURPOSE, AND NON-INFRINGEMENT. THE OWNER DOES NOT WARRANT THAT THE
+   SOFTWARE WILL BE UNINTERRUPTED, ERROR-FREE, OR SECURE. YOU ASSUME ALL
+   RISK ARISING OUT OF USE OF THE SOFTWARE.
+
+7. LIMITATION OF LIABILITY
+
+   TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL THE OWNER BE
+   LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR
+   PUNITIVE DAMAGES WHATSOEVER (INCLUDING WITHOUT LIMITATION DAMAGES FOR
+   LOSS OF PROFITS, DATA, OR BUSINESS INTERRUPTION) ARISING OUT OF OR IN
+   ANY WAY CONNECTED WITH THE SOFTWARE OR THIS AGREEMENT, EVEN IF THE
+   OWNER HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. THE OWNER'S
+   TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT, IF ANY, PAID BY YOU FOR
+   THE SOFTWARE.
+
+8. GOVERNING LAW
+
+   This Agreement shall be governed by and construed in accordance with
+   the laws of the Owner's jurisdiction, without regard to its conflict
+   of law principles.
+
+9. ENTIRE AGREEMENT
+
+   This Agreement constitutes the entire agreement between You and the
+   Owner relating to the Software and supersedes all prior understandings
+   or agreements, written or oral. Any amendment must be in writing and
+   signed by the Owner. If any provision of this Agreement is found to
+   be invalid or unenforceable, the remaining provisions shall continue
+   in full force and effect.
+
+10. CONTACT
+
+    Licensing inquiries and permissions may be directed to the Owner:
+
+      Email:     ox17afnan@gmail.com
+      Instagram: https://www.instagram.com/wamphead/
+      GitHub:    https://github.com/Afnan-w
+
+Copyright (c) 2026 Afnan. Searchit and its logo are the sole property of
+Afnan. Unauthorized copying, modification, resale, or distribution of the
+Software is prohibited by law and may result in civil and criminal
+penalties.
