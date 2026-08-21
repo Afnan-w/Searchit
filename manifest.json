@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Searchit",
+  "version": "2.0.0",
+  "description": "Search for products on Bikroy and Rokomari — see product results right in the extension popup.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    },
+    "default_title": "Searchit"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://bikroy.com/*",
+    "https://www.rokomari.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
