@@ -369,6 +369,16 @@ body {
   gap: 10px;
 }
 
+.cache-indicator {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+}
+
 .result-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
