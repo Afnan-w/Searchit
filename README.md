@@ -120,10 +120,8 @@ The included icons are indigo-to-purple rounded squares with a white **"S"**. To
 
 ## License
 
-**Proprietary — All Rights Reserved.**
+**Free to use. No modification. No monetization.**
 
-This project is **not open source**. The source code is made viewable for reference only. See [LICENSE](LICENSE) for full terms.
+You are free to download and use Searchit for personal or commercial purposes at no cost. You may NOT modify the code, reverse engineer it, or use it to make money (selling, reselling, embedding in paid products, etc.). See [LICENSE](LICENSE) for full terms and [EULA.txt](EULA.txt) for the end-user agreement.
 
-If you distribute Searchit to end users, you must include the accompanying [EULA.txt](EULA.txt), which grants users a license to run the software only — no source-code access, modification, or resale.
-
-Copyright (c) 2026 Afnan ([@Afnan-w](https://github.com/Afnan-w)). No use, copying, modification, or distribution is permitted without prior written permission from the owner.
+Copyright (c) 2026 Afnan ([@Afnan-w](https://github.com/Afnan-w)). All intellectual property rights reserved.
