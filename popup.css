@@ -396,18 +396,8 @@ body {
   font-size: 13px;
 }
 
-.result-header.bikroy {
-  background: linear-gradient(135deg, #00b53f 0%, #009a32 100%);
-  color: #ffffff;
-}
-
 .result-header.rokomari {
   background: linear-gradient(135deg, #e2122e 0%, #c41020 100%);
-  color: #ffffff;
-}
-
-.result-header.daraz {
-  background: linear-gradient(135deg, #0F146D 0%, #2A2A78 100%);
   color: #ffffff;
 }
 
@@ -659,26 +649,6 @@ body {
   color: #ff6b7a;
 }
 
-.offer-site-tag.bikroy {
-  background: rgba(0, 181, 63, 0.1);
-  color: #009a32;
-}
-
-[data-theme="dark"] .offer-site-tag.bikroy {
-  background: rgba(0, 181, 63, 0.2);
-  color: #4ade80;
-}
-
-.offer-site-tag.daraz {
-  background: rgba(15, 20, 109, 0.1);
-  color: #0F146D;
-}
-
-[data-theme="dark"] .offer-site-tag.daraz {
-  background: rgba(15, 20, 109, 0.2);
-  color: #818cf8;
-}
-
 .offers-link-section {
   padding: 8px 12px;
   border-top: 1px solid var(--border);
@@ -708,16 +678,8 @@ body {
   opacity: 0.9;
 }
 
-.offers-link.bikroy-link {
-  background: #00b53f;
-}
-
 .offers-link.rokomari-link {
   background: #e2122e;
-}
-
-.offers-link.daraz-link {
-  background: #0F146D;
 }
 
 .offers-empty {

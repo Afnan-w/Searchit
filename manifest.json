@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Searchit",
-  "version": "2.2.0",
-  "description": "Search for products on Bikroy, Rokomari, and Daraz — see product results right in the extension popup.",
+  "version": "3.0.0",
+  "description": "Search for products on Rokomari — see product results right in the extension popup.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -23,9 +23,7 @@
     "storage"
   ],
   "host_permissions": [
-    "https://bikroy.com/*",
-    "https://www.rokomari.com/*",
-    "https://www.daraz.com.bd/*"
+    "https://www.rokomari.com/*"
   ],
   "background": {
     "service_worker": "background.js"

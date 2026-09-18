@@ -1,15 +1,14 @@
 # Searchit - Chrome Extension
 
-A Chrome Extension (Manifest V3) that searches **Bikroy** and **Rokomari** and shows product results directly in the popup.
+A Chrome Extension (Manifest V3) that searches **Rokomari** and shows product results directly in the popup.
 
 ## Features
 
 - **Inline product results**: See product cards (image, title, price, link) right in the popup
-- **Dual-site search**: Searches Bikroy and Rokomari simultaneously
 - **Bilingual support**: English and Bengali (বাংলা) queries
 - **Modern UI**: Dark/light mode, clean card layout, responsive design
 - **Recent searches**: Last 8 queries saved for quick re-search
-- **Open Both**: Opens both search result pages in new tabs
+- **Rokomari affiliate links**: Every product link includes your Rokomari affiliate referral tags
 
 > **Not on the Chrome Web Store.** See [Download & Install Locally](#download--install-locally-step-by-step) below to get it running in your browser.
 
@@ -59,7 +58,7 @@ git clone https://github.com/Afnan-w/Searchit.git
 1. Click the **Searchit** icon in your toolbar
 2. Type a product name (in English or Bengali)
 3. Press **Enter** or click **Search**
-4. See results from Bikroy and Rokomari side by side
+4. See results from Rokomari directly in the popup
 
 ---
 
@@ -69,7 +68,7 @@ git clone https://github.com/Afnan-w/Searchit.git
 |---------|-----|
 | "Load unpacked" button is greyed out | Turn on **Developer mode** (top-right toggle) |
 | Extension doesn't show up after loading | Make sure you selected the folder that contains `manifest.json`, not its parent |
-| Search doesn't return results | Check your internet connection — Searchit needs to fetch live data from Bikroy and Rokomari |
+| Search doesn't return results | Check your internet connection — Searchit needs to fetch live data from Rokomari |
 | Extension icon is missing | Make sure the `icons/` folder with `icon16.png`, `icon48.png`, and `icon128.png` is inside the loaded folder |
 | Extension stopped working after update | Go to `chrome://extensions/` and click the **refresh button** 🔄 on the Searchit card |
 
@@ -79,7 +78,6 @@ git clone https://github.com/Afnan-w/Searchit.git
 
 | Site | Method | Notes |
 |------|--------|-------|
-| **Bikroy** | Server-side rendered HTML (Nuxt.js) | Extracts listing cards via `fetch()` + `DOMParser` |
 | **Rokomari** | Server-side rendered HTML (Next.js) | Extracts product cards via `fetch()` + `DOMParser` |
 
 When inline extraction isn't possible, the extension shows a "View all results" button that links directly to the search page.
@@ -107,7 +105,6 @@ project101/
 | `activeTab` | Interact with current tab |
 | `tabs` | Open search pages in new tabs |
 | `storage` | Save recent searches and theme preference |
-| `bikroy.com` | Fetch Bikroy search pages |
 | `rokomari.com` | Fetch Rokomari search pages |
 
 ## Replacing Icons
