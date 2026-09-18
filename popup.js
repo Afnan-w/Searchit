@@ -19,8 +19,11 @@
   // ============================================
   const BIKROY_BASE_URL = 'https://bikroy.com';
   const ROKOMARI_BASE_URL = 'https://www.rokomari.com';
+  const DARAZ_BASE_URL = 'https://www.daraz.com.bd';
   const BIKROY_SEARCH_URL = BIKROY_BASE_URL + '/search?query=';
   const ROKOMARI_SEARCH_URL = ROKOMARI_BASE_URL + '/search?term=';
+  const DARAZ_SEARCH_URL = DARAZ_BASE_URL + '/catalog/?q=';
+  const ROKOMARI_AFF_PARAMS = 'affId=I7oR67409R00i0R&affs=73726&cma=604800';
   const MAX_RECENT = 8;
   const MAX_PRODUCTS = 6;
   const MAX_OFFERS = 5;
@@ -53,6 +56,8 @@
   const rokomariProducts = $('#rokomari-products');
   const bikroyLink = $('#bikroy-link');
   const bikroyProducts = $('#bikroy-products');
+  const darazLink = $('#daraz-link');
+  const darazProducts = $('#daraz-products');
   const offersContent = $('#offers-content');
 
   // ============================================
@@ -408,7 +413,10 @@
         const linkEl =
           card.querySelector('a[class*="productDetailsBody"]') || card.querySelector('a[href]');
         const link = linkEl ? linkEl.getAttribute('href') : '';
-        const fullLink = link.startsWith('/') ? ROKOMARI_BASE_URL + link : link;
+        let fullLink = link.startsWith('/') ? ROKOMARI_BASE_URL + link : link;
+        if (fullLink) {
+          fullLink += (fullLink.includes('?') ? '&' : '?') + ROKOMARI_AFF_PARAMS;
+        }
 
         // Price (current price <p>, not the strikethrough <del> inside productPricePart)
         const priceEl = card.querySelector('[class*="productPrice"]');
@@ -453,6 +461,220 @@
   }
 
   // ============================================
+  // Product Extraction - Daraz (HTML + embedded data)
+  // ============================================
+
+  /**
+   * Fetch Daraz search page and extract product data.
+   * Daraz is a React SPA (Alibaba/Lazada stack) so plain DOM selectors
+   * on server-rendered HTML won't find product cards. Instead we look for
+   * embedded JSON data in <script> tags that the SSR injector places,
+   * then fall back to CSS selectors on whatever the server does send.
+   */
+  async function extractDarazProducts(query) {
+    const url = buildSearchUrl(DARAZ_SEARCH_URL, query);
+    try {
+      const html = await fetchHtml(url);
+
+      // --- Strategy 1: look for embedded product JSON in script tags ---
+      const fromJson = extractDarazFromScripts(html);
+      if (fromJson !== null && fromJson.length > 0) return fromJson;
+
+      // --- Strategy 2: CSS selectors on server-rendered cards ---
+      return extractDarazFromCss(html);
+    } catch (err) {
+      console.warn('[Searchit] Daraz extraction failed:', err.message);
+      return null;
+    }
+  }
+
+  /**
+   * Daraz SSR injects product data inside <script> tags as JS variable
+   * assignments or JSON blobs. We scan for common patterns:
+   *   - window.__moduleData__ = {...}
+   *   - window.pageData = {...}
+   *   - "listItem" or "mods" keys containing product arrays
+   */
+  function extractDarazFromScripts(html) {
+    // Patterns that Daraz uses to embed search result JSON
+    const patterns = [
+      /window\.__moduleData__\s*=\s*(\{[\s\S]*?\});\s*<\/script>/,
+      /window\.pageData\s*=\s*(\{[\s\S]*?\});\s*<\/script>/,
+      /"listItem"\s*:\s*(\[[\s\S]*?\])\s*[,}]/,
+      /"mods"\s*:\s*(\{[\s\S]*?"listItems"[\s\S]*?\})\s*[,}]/
+    ];
+
+    for (const pattern of patterns) {
+      const match = html.match(pattern);
+      if (!match) continue;
+      try {
+        const data = JSON.parse(match[1]);
+        const items = parseDarazProductData(data);
+        if (items && items.length > 0) return items.slice(0, MAX_PRODUCTS);
+      } catch (_) {
+        // not valid JSON, try next pattern
+      }
+    }
+
+    // Broader approach: find any large JSON blob with product-like structure
+    const jsonBlobPattern = /(?:window\.\w+\s*=\s*|>)(\{[\s\S]{500,}?\})\s*(?:;<\/script>|<\/script>)/g;
+    let blobMatch;
+    while ((blobMatch = jsonBlobPattern.exec(html)) !== null) {
+      try {
+        const data = JSON.parse(blobMatch[1]);
+        const items = parseDarazProductData(data);
+        if (items && items.length > 0) return items.slice(0, MAX_PRODUCTS);
+      } catch (_) {
+        // skip
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Recursively search a parsed JSON structure for arrays of product-like
+   * objects (must have name/title + price + either imageUrl or itemUrl).
+   */
+  function parseDarazProductData(data, depth) {
+    if (depth === undefined) depth = 0;
+    if (depth > 6 || !data) return null;
+
+    // Direct array of product objects
+    if (Array.isArray(data)) {
+      const products = data.filter(isDarazProduct).slice(0, MAX_PRODUCTS);
+      if (products.length > 0) {
+        return products.map(mapDarazProduct);
+      }
+    }
+
+    // Object with a "listItems" key (common Daraz pattern)
+    if (typeof data === 'object') {
+      if (Array.isArray(data.listItems)) {
+        const products = data.listItems.filter(isDarazProduct).slice(0, MAX_PRODUCTS);
+        if (products.length > 0) return products.map(mapDarazProduct);
+      }
+      if (data.mods && Array.isArray(data.mods.listItems)) {
+        const products = data.mods.listItems.filter(isDarazProduct).slice(0, MAX_PRODUCTS);
+        if (products.length > 0) return products.map(mapDarazProduct);
+      }
+      // Recurse into values
+      for (const key of Object.keys(data)) {
+        const result = parseDarazProductData(data[key], depth + 1);
+        if (result) return result;
+      }
+    }
+
+    return null;
+  }
+
+  function isDarazProduct(obj) {
+    if (!obj || typeof obj !== 'object') return false;
+    const hasName = typeof obj.name === 'string' || typeof obj.title === 'string';
+    const hasPrice = obj.price !== undefined || obj.priceShow !== undefined || obj.originalPrice !== undefined;
+    return hasName && hasPrice;
+  }
+
+  function mapDarazProduct(item) {
+    const title = String(item.name || item.title || '').trim().substring(0, 120);
+
+    // Price: Daraz may use price (number/string), priceShow, priceMin, etc.
+    let price = '';
+    if (typeof item.priceShow === 'string') price = item.priceShow;
+    else if (item.price != null) price = '৳' + String(item.price);
+    else if (item.priceMin != null) price = '৳' + String(item.priceMin);
+
+    // Original / strikethrough price
+    let origPrice = '';
+    if (typeof item.originalPriceShow === 'string') origPrice = item.originalPriceShow;
+    else if (item.originalPrice != null) origPrice = '৳' + String(item.originalPrice);
+
+    // Discount
+    let discount = '';
+    if (item.discount) discount = String(item.discount);
+
+    // Image: imageUrl, image, img, etc.
+    const image = item.imageUrl || item.image || item.img || '';
+
+    // Link
+    let link = item.itemUrl || item.url || item.link || '';
+    if (link && !link.startsWith('http')) link = DARAZ_BASE_URL + link;
+
+    // Location / seller
+    const brand = item.brandName || item.sellerName || item.location || '';
+
+    return { title, price, origPrice, image, link, brand, discount };
+  }
+
+  /**
+   * Fallback: try to find product cards via CSS selectors.
+   * Daraz's server-rendered HTML is sparse, but some product elements
+   * may be present with data attributes or specific class patterns.
+   */
+  function extractDarazFromCss(html) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const items = [];
+
+    // Try common Daraz card selectors
+    const selectors = [
+      '[data-tracking="product-card"]',
+      '.gridItem',
+      '.edi-product',
+      '[class*="product-card"]',
+      '[class*="gridProduct"]'
+    ];
+
+    let cards = [];
+    for (const sel of selectors) {
+      cards = doc.querySelectorAll(sel);
+      if (cards.length > 0) break;
+    }
+
+    const limit = Math.min(cards.length, MAX_PRODUCTS);
+    for (let i = 0; i < limit; i++) {
+      const card = cards[i];
+
+      // Title
+      const titleEl =
+        card.querySelector('[class*="title"]') ||
+        card.querySelector('[class*="name"]') ||
+        card.querySelector('a[title]');
+      if (!titleEl) continue;
+      const title = (titleEl.getAttribute('title') || titleEl.textContent || '').trim().substring(0, 120);
+      if (!title) continue;
+
+      // Link
+      const linkEl = card.querySelector('a[href]') || card.closest('a[href]');
+      let link = linkEl ? linkEl.getAttribute('href') : '';
+      if (link && !link.startsWith('http')) link = DARAZ_BASE_URL + link;
+
+      // Price
+      const priceEl =
+        card.querySelector('[class*="price"]') ||
+        card.querySelector('[class*="Price"]');
+      const price = priceEl ? priceEl.textContent.trim() : '';
+
+      // Original price
+      const origPriceEl = card.querySelector('[class*="original"] del, [class*="origin"] s, del');
+      const origPrice = origPriceEl ? origPriceEl.textContent.trim() : '';
+
+      // Image
+      const imgEl = card.querySelector('img[src]');
+      const image = imgEl ? imgEl.getAttribute('src') : '';
+
+      // Discount badge
+      const badgeEl =
+        card.querySelector('[class*="discount"]') ||
+        card.querySelector('[class*="badge"]');
+      const discount = badgeEl ? badgeEl.textContent.trim() : '';
+
+      items.push({ title, price, origPrice, image, link, brand: '', discount });
+    }
+
+    return items.length > 0 ? items : [];
+  }
+
+  // ============================================
   // Result Caching (session-scoped)
   // ============================================
 
@@ -470,13 +692,13 @@
     }
   }
 
-  async function writeCachedSearch(query, bikroyItems, rokomariItems) {
-    // Never cache partial failures - both sites must have extracted cleanly.
-    if (!Array.isArray(bikroyItems) || !Array.isArray(rokomariItems)) return;
+  async function writeCachedSearch(query, bikroyItems, rokomariItems, darazItems) {
+    // Never cache partial failures - all sites must have extracted cleanly.
+    if (!Array.isArray(bikroyItems) || !Array.isArray(rokomariItems) || !Array.isArray(darazItems)) return;
     try {
       const result = await chrome.storage.session.get([CACHE_KEY]);
       const cache = (result && result[CACHE_KEY]) || {};
-      cache[query.toLowerCase()] = { bikroyItems, rokomariItems, ts: Date.now() };
+      cache[query.toLowerCase()] = { bikroyItems, rokomariItems, darazItems, ts: Date.now() };
       const keys = Object.keys(cache);
       if (keys.length > CACHE_MAX_ENTRIES) {
         keys.sort((a, b) => (cache[a].ts || 0) - (cache[b].ts || 0));
@@ -616,14 +838,20 @@
   // ============================================
 
   /**
-   * Render discounted products from Rokomari + direct deals links.
+   * Render discounted products from Rokomari + Daraz + direct deals links.
    */
-  function renderOffers(rokomariItems, query) {
+  function renderOffers(rokomariItems, darazItems, query) {
     const discounted = [];
     if (Array.isArray(rokomariItems)) {
       for (const item of rokomariItems) {
         const pct = normalizeDiscount(item.discount);
         if (pct > 0) discounted.push({ ...item, site: 'Rokomari', pct });
+      }
+    }
+    if (Array.isArray(darazItems)) {
+      for (const item of darazItems) {
+        const pct = normalizeDiscount(item.discount);
+        if (pct > 0) discounted.push({ ...item, site: 'Daraz', pct });
       }
     }
 
@@ -670,6 +898,9 @@
           <a href="${escapeHtml(buildSearchUrl(ROKOMARI_SEARCH_URL, query))}" target="_blank" rel="noopener noreferrer" class="offers-link rokomari-link">
             Rokomari Offers
           </a>
+          <a href="${escapeHtml(buildSearchUrl(DARAZ_SEARCH_URL, query))}" target="_blank" rel="noopener noreferrer" class="offers-link daraz-link">
+            Daraz Deals
+          </a>
         </div>
       </div>`;
 
@@ -697,9 +928,11 @@
 
     const bikroyUrl = buildSearchUrl(BIKROY_SEARCH_URL, query);
     const rokomariUrl = buildSearchUrl(ROKOMARI_SEARCH_URL, query);
+    const darazUrl = buildSearchUrl(DARAZ_SEARCH_URL, query);
 
     bikroyLink.href = bikroyUrl;
     rokomariLink.href = rokomariUrl;
+    darazLink.href = darazUrl;
 
     addRecentSearch(query);
 
@@ -709,7 +942,8 @@
     if (cached) {
       renderProductList(bikroyProducts, cached.bikroyItems, 'Bikroy', bikroyUrl);
       renderProductList(rokomariProducts, cached.rokomariItems, 'Rokomari', rokomariUrl);
-      renderOffers(cached.rokomariItems, query);
+      renderProductList(darazProducts, cached.darazItems, 'Daraz', darazUrl);
+      renderOffers(cached.rokomariItems, cached.darazItems, query);
       showCacheIndicator(true);
       setState('results');
       return;
@@ -718,23 +952,25 @@
 
     setState('loading');
 
-    const [bikroyItems, rokomariItems] = await Promise.all([
+    const [bikroyItems, rokomariItems, darazItems] = await Promise.all([
       extractBikroyProducts(query),
       extractRokomariProducts(query),
+      extractDarazProducts(query),
     ]);
     if (seq !== searchSeq) return; // superseded by a newer search
 
-    writeCachedSearch(query, bikroyItems, rokomariItems);
+    writeCachedSearch(query, bikroyItems, rokomariItems, darazItems);
     renderProductList(bikroyProducts, bikroyItems, 'Bikroy', bikroyUrl);
     renderProductList(rokomariProducts, rokomariItems, 'Rokomari', rokomariUrl);
-    renderOffers(rokomariItems, query);
+    renderProductList(darazProducts, darazItems, 'Daraz', darazUrl);
+    renderOffers(rokomariItems, darazItems, query);
     setState('results');
   }
 
   // ============================================
   // Open Both Sites
   // ============================================
-  function openBothSites(query) {
+  function openAllSites(query) {
     query = (query || searchInput.value).trim();
     if (!query) {
       showError('Please enter a search term first.');
@@ -743,6 +979,7 @@
     addRecentSearch(query);
     chrome.tabs.create({ url: buildSearchUrl(BIKROY_SEARCH_URL, query) });
     chrome.tabs.create({ url: buildSearchUrl(ROKOMARI_SEARCH_URL, query) });
+    chrome.tabs.create({ url: buildSearchUrl(DARAZ_SEARCH_URL, query) });
   }
 
   // ============================================
@@ -766,7 +1003,7 @@
     setState('empty');
   });
 
-  openBothBtn.addEventListener('click', () => openBothSites(searchInput.value));
+  openBothBtn.addEventListener('click', () => openAllSites(searchInput.value));
 
   themeToggle.addEventListener('click', toggleTheme);
 
